@@ -6,6 +6,7 @@ type Store interface {
 	// Users
 	CreateUser() error
 	CreateTask(t *Task) (*Task, error)
+	GetTask(id string) (*Task, error)
 }
 
 type Repository struct {
@@ -36,4 +37,10 @@ func (s *Repository) CreateTask(t *Task) (*Task, error) {
 
 	t.ID = id
 	return t, nil
+}
+
+func (s *Repository) GetTask(id string) (*Task, error) {
+	var t Task
+	err := s.db.QueryRow("SELECT id, name, status, project_id, assigned_to, createdAt FROM tasks WHERE id = ?", id).Scan(&t.ID, &t.Name, &t.Status, &t.ProjectID, &t.AssignedTo, &t.CreatedAt)
+	return &t, err
 }
