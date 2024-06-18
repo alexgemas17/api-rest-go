@@ -20,8 +20,11 @@ func (s *ApiServer) Serve() {
 	router := mux.NewRouter()
 	subRouter := router.PathPrefix("/api/v1").Subrouter()
 
-	TasksService := NewTasksService(s.store)
-	TasksService.RegisterRoutes(subRouter)
+	userService := NewUserService(s.store)
+	userService.RegisterRoutes(subRouter)
+
+	tasksService := NewTasksService(s.store)
+	tasksService.RegisterRoutes(subRouter)
 
 	log.Println("Started api serve at", s.address)
 	log.Fatal(http.ListenAndServe(s.address, subRouter))
