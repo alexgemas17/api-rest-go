@@ -3,29 +3,32 @@ package main
 import (
 	"log"
 
+	"github.com/alexgemas17/api-rest-go/api"
+	"github.com/alexgemas17/api-rest-go/api/envs"
+	"github.com/alexgemas17/api-rest-go/api/store"
 	"github.com/go-sql-driver/mysql"
 )
 
 func main() {
 	cfg := mysql.Config{
-		User:                 Envs.DBUser,
-		Passwd:               Envs.DBPassword,
-		Addr:                 Envs.DBAddress,
-		DBName:               Envs.DBName,
+		User:                 envs.Envs.DBUser,
+		Passwd:               envs.Envs.DBPassword,
+		Addr:                 envs.Envs.DBAddress,
+		DBName:               envs.Envs.DBName,
 		Net:                  "tcp",
 		AllowNativePasswords: true,
 		ParseTime:            true,
 	}
 
-	sqlRepository := NewSQLRepository(cfg)
+	sqlRepository := store.NewSQLRepository(cfg)
 
 	db, err := sqlRepository.Init()
 	if err != nil {
 		log.Fatal((err))
 	}
 
-	repository := NewStore(db)
+	repository := store.NewStore(db)
 
-	api := NewApiServer(":3000", repository)
+	api := api.NewApiServer(":3000", repository)
 	api.Serve()
 }
